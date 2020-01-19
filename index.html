@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Deribit options visualizer</title>
+<meta charset="utf-8">
+<meta name="description" content="Visualize Deribit options profit and loss diagrams and compare them to bitcoin charts.">
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="styles.css">
+<link rel="shortcut icon" type="image/png" href="favicon.png"/>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-155274806-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-155274806-1');
+</script>
+
+</head>
+
+<body>
+<div id="grid">
+    <div id="header">
+        <div id="headerContainer">
+            <div id="title">
+                <h1>Deribit options visualizer</h1>
+            </div>
+            <div id="options">
+                <div class="mr-2">
+                    Chart:
+                </div>
+                <div class="col-xs-1 mr-3">
+                    <select id="futureDropdown" class="form-control input-sm"></select>
+                </div>
+                <div class="mr-2">
+                    Interval:
+                </div>
+                <div class="col-xs-1 mr-3">
+                    <select id="intervalDropdown" class="form-control input-sm"></select>
+                </div>
+                <div class="mr-2">
+                    Option expirations:
+                </div>
+                <div class="col-xs-1">
+                    <select id="optionDropdown" class="form-control input-sm"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        <div id="chart"></div>
+    </div>
+
+    <div id="info">
+        <div id="watchListTableContainer">
+            <table class="table table-bordered table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th>Instrument</th>
+                        <th>Order type</th>
+                        <th>Quantity</th>
+                        <th>Remainder</th>
+                        <th>Total price</th>
+                    </tr>
+                </thead>
+                <tbody id="watchListTable">
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <ul>
+                <li>Scroll over axis to control individual axis scale.</li>
+                <li>Click on strike price on center axis to see CALL and PUT orderbooks.</li>
+                <li>Remainder shows amount left over when order book is depleted.</li>
+            </ul>
+        </div>
+
+        <div class="container">
+            <iframe id="signup" src="https://cdn.forms-content.sg-form.com/29c187ba-2d8d-11ea-b28f-9ad1db455c67"/></iframe>
+        </div>
+    </div>
+
+    <div id="footer">
+        <div id="footerContainer">
+            <span><a class="text-light" href="mailto:optionsvisualizer@outlook.com">Contact - optionsvisualizer@outlook.com</a></span>
+            <span><a class="text-light ml-5" href="https://www.deribit.com/">Deribit homepage</a></span>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal-custom">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom border-bottom">
+            <span class="close" id="closeModal">&times;</span>
+            <h2 id="modal-title-custom"></h2>
+        </div>
+        <div class="modal-input-custom border-bottom">
+            <label for="quantityInput">Quantity: </label>
+            <input type="text" class="form-control" id="quantityInput" placeholder="Quantity..." maxlength="14" autocomplete="off" style="width:150px;">
+        </div>
+        <div class="modal-table-custom border-bottom">
+            <div class="row">
+                <div class="col">
+                    <span>Calls</span>
+                    <table class="table table-bordered table-sm table-custom">
+                        <thead>
+                            <tr>
+                                <th>Total</th>
+                                <th>bidSize</th>
+                                <th>bidPrice</th>
+                                <th>askPrice</th>
+                                <th>askSize</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderBookCallTable">
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col">
+                    <span>Puts</span>
+                    <table class="table table-bordered table-sm table-custom">
+                        <thead>
+                            <tr>
+                                <th>Total</th>
+                                <th>bidSize</th>
+                                <th>bidPrice</th>
+                                <th>askPrice</th>
+                                <th>askSize</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderBookPutTable">
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-output-custom">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="totalCallBidPrice">Total call bid price: </label>
+                                <input type="text" class="form-control" id="totalCallBidPrice" disabled="disabled" value="-">
+                            </div>
+                            <button type="button" data-ordertype='bids' data-optiontype='C' class="orderButton btn btn-danger border-radius-5">Sell Call</button>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="totalCallAskPrice">Total call ask price: </label>
+                                <input type="text" class="form-control" id="totalCallAskPrice" disabled="disabled" value="-">
+                            </div>
+                            <button type="button" data-ordertype='asks' data-optiontype='C' class="orderButton btn btn-success border-radius-5">Buy Call</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="totalPutBidPrice">Total put bid price: </label>
+                                <input type="text" class="form-control" id="totalPutBidPrice" disabled="disabled" value="-">
+                            </div>
+                            <button type="button" data-ordertype='bids' data-optiontype='P' class="orderButton btn btn-danger border-radius-5">Sell Put</button>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="totalPutAskPrice">Total put ask price: </label>
+                                <input type="text" class="form-control" id="totalPutAskPrice" disabled="disabled" value="-">
+                            </div>
+                            <button type="button" data-ordertype='asks' data-optiontype='P' class="orderButton btn btn-success border-radius-5">Buy Put</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://d3js.org/d3-selection-multi.v1.min.js"></script>
+<script src="d3-xyzoom.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
